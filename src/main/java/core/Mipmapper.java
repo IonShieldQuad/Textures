@@ -9,19 +9,32 @@ import core.TextureUtils.Filtering;
 import static core.TextureUtils.interpolate;
 
 public class Mipmapper {
-    List<List<BufferedImage>> data = new ArrayList<>();
+    private List<List<BufferedImage>> data = new ArrayList<>();
+    private BufferedImage texture;
+    private boolean generated = false;
     
     public Mipmapper() {
         data.add(new ArrayList<>());
     }
     
     public Mipmapper(BufferedImage texture) {
-        data.add(new ArrayList<>());
-        createMipmaps(texture);
+        loadTexture(texture);
     }
     
-    public void createMipmaps(BufferedImage texture) {
+    public void loadTexture(BufferedImage texture) {
+        generated = false;
+        this.texture = texture;
+        data.clear();
+        data.add(new ArrayList<>());
         data.get(0).add(texture);
+    }
+    
+    public BufferedImage getTexture() {
+        return texture;
+    }
+    
+    private void createMipmaps() {
+        generated = true;
         
         int steps = (int)Math.ceil(Math.log(Math.min(texture.getHeight(), texture.getWidth())) / Math.log(2));
         
@@ -84,6 +97,9 @@ public class Mipmapper {
     }
     
     public BufferedImage getMipmap(int x, int y) {
+        if (!generated && (x != 0 || y != 0)) {
+            createMipmaps();
+        }
         return data.get(y).get(x);
     }
     
@@ -123,10 +139,18 @@ public class Mipmapper {
     }
     
     public int countX() {
-        return data.get(0).size();
+        //return data.get(0).size();
+        if (texture == null) {
+            return 0;
+        }
+        return (int)Math.ceil(Math.log(Math.min(texture.getHeight(), texture.getWidth())) / Math.log(2));
     }
     
     public int countY() {
-     return data.size();
+        //return data.size();
+        if (texture == null) {
+            return 0;
+        }
+        return (int)Math.ceil(Math.log(Math.min(texture.getHeight(), texture.getWidth())) / Math.log(2));
     }
 }

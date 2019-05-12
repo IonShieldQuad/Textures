@@ -38,6 +38,7 @@ public class MainWindow {
     private JTextField offZField;
     private JCheckBox showOutline;
     private JCheckBox useMipmapsCheckBox;
+    private JButton addSquare;
     
     //private List<Model> models = new ArrayList<>();
     private List<Point3D> points = new ArrayList<>();
@@ -56,6 +57,7 @@ public class MainWindow {
         removeButton.addActionListener(e -> removePoint());
         clearButton.addActionListener(e -> clearPoints());
         selectTextureButton.addActionListener(e -> selectTexture());
+        addSquare.addActionListener(e -> addSquare());
     }
     
     private void display() {
@@ -146,6 +148,14 @@ public class MainWindow {
             points.remove(list1.getSelectedIndex());
             updateList();
         }
+    }
+    
+    private void addSquare() {
+        points.add(new Point3D(-100, -100, 0, 0, 0));
+        points.add(new Point3D(100, -100, 0, 1, 0));
+        points.add(new Point3D(100, 100, 0, 1, 1));
+        points.add(new Point3D(-100, 100, 0, 0, 1));
+        updateList();
     }
     
     private void clearPoints() {
