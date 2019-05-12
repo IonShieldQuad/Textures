@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 public class TextureUtils {
     public static PointDouble uvToXy(BufferedImage texture, double u, double v) {
-        return new PointDouble(texture.getWidth() * u, texture.getHeight() * v);
+        return new PointDouble(texture.getWidth() * (u - (int) u + (u < 0 ? 1 : 0)), texture.getHeight() * (v - (int)v + (v < 0 ? 1 : 0)));
     }
     
     public static double interpolate(double a, double b, double alpha) {
@@ -32,7 +32,7 @@ public class TextureUtils {
                 return getColor(texture, u, v);
         }
         PointDouble xy = uvToXy(texture, u, v);
-        return new Color(texture.getRGB((int)Math.min(Math.round(xy.getX()), texture.getWidth() - 1), (int)Math.min(Math.round(xy.getY()), texture.getHeight() - 1)));
+        return new Color(getRGBSafe(texture, (int)Math.round(xy.getX()), (int)Math.round(xy.getY())));
     }
     
     public static Color getColor(BufferedImage texture, double u, double v) {

@@ -39,6 +39,8 @@ public class MainWindow {
     private JCheckBox showOutline;
     private JCheckBox useMipmapsCheckBox;
     private JButton addSquare;
+    private JTextField mmBiasUField;
+    private JTextField mmBiasVField;
     
     //private List<Model> models = new ArrayList<>();
     private List<Point3D> points = new ArrayList<>();
@@ -85,6 +87,8 @@ public class MainWindow {
             graph.setTexture(texture);
             graph.setShowOutline(showOutline.isSelected());
             graph.setUseMipmap(useMipmapsCheckBox.isSelected());
+            graph.setMipmapBiasU(Double.parseDouble(mmBiasUField.getText()));
+            graph.setMipmapBiasV(Double.parseDouble(mmBiasVField.getText()));
             
             List<Polygon> polygons = new ArrayList<>();
             for (int i = 0; i < points.size() - 2; i++) {

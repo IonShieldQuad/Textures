@@ -100,6 +100,16 @@ public class Mipmapper {
         if (!generated && (x != 0 || y != 0)) {
             createMipmaps();
         }
+        y = Math.max(0, Math.min(data.size() - 1, y));
+        x = Math.max(0, Math.min(data.get(y).size() - 1, x));
+        
+        return data.get(y).get(x);
+    }
+    
+    public BufferedImage getMipmapUnclamped(int x, int y) {
+        if (!generated && (x != 0 || y != 0)) {
+            createMipmaps();
+        }
         return data.get(y).get(x);
     }
     

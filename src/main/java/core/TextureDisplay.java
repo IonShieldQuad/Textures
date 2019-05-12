@@ -17,6 +17,8 @@ public class TextureDisplay extends JPanel {
     private double scale = 1.0;
     private boolean showOutline;
     private boolean useMipmap;
+    private double mipmapBiasU = 0;
+    private double mipmapBiasV = 0;
     
     //All angles are in radians!
     
@@ -39,7 +41,6 @@ public class TextureDisplay extends JPanel {
     private void drawPolygon(Graphics g, Polygon p, BufferedImage texture) {
         //System.out.println("Polygon: " + p.a + p.b + p.c);
         Mipmapper mm = new Mipmapper(texture);
-        Point3D lineDir = new Point3D(0, 0 ,1);
         Polygon proj = new Polygon(p.a.copy(), p.b.copy(), p.c.copy());
         proj.a.setZ(0);
         proj.b.setZ(0);
@@ -53,7 +54,6 @@ public class TextureDisplay extends JPanel {
         
         for (int i = minY; i < maxY; i++) {
             for (int j = minX; j < maxX; j++) {
-                Point3D pos = new Point3D(j, i, 0);
                 Point3D point = new Point3D(j, i, 0);
                 if (proj.contains(point)) {
                     PointDouble uv = proj.uv(point);
@@ -63,10 +63,10 @@ public class TextureDisplay extends JPanel {
                     PointDouble uvt = proj.uv(new Point3D(j, i - 1, 0));
                     PointDouble uvb = proj.uv(new Point3D(j, i + 1, 0));
                     
-                    double dudx = ((Math.abs(uv.getX() - uvl.getX()) + Math.abs(uv.getX() - uvr.getX())) / 2) * mm.getMipmap(0, 0).getWidth();
-                    double dvdy = ((Math.abs(uv.getY() - uvt.getY()) + Math.abs(uv.getY() - uvb.getY())) / 2) * mm.getMipmap(0, 0).getHeight();
-                    double mmU = Math.max(0, Math.log(dudx) / Math.log(2));
-                    double mmV = Math.max(0, Math.log(dvdy) / Math.log(2));
+                    double dudx = ((Math.abs(uv.getX() - uvl.getX()) + Math.abs(uv.getX() - uvr.getX()) + Math.abs(uv.getX() - uvt.getX()) + Math.abs(uv.getX() - uvb.getX())) / 2) * mm.getMipmap(0, 0).getWidth();
+                    double dvdy = ((Math.abs(uv.getY() - uvl.getY()) + Math.abs(uv.getY() - uvr.getY()) + Math.abs(uv.getY() - uvt.getY()) + Math.abs(uv.getY() - uvb.getY())) / 2) * mm.getMipmap(0, 0).getHeight();
+                    double mmU = Math.max(0, (Math.log(dudx) / Math.log(2)) + mipmapBiasU);
+                    double mmV = Math.max(0, (Math.log(dvdy) / Math.log(2)) + mipmapBiasV);
                     //System.out.println("du/dx: " + dudx + ", dv/dy: " + dvdy + ", mmU: " + mmU + ", mmV: " + mmV);
                     
                     Color c = mm.getColor(uv.getX(), 1 - uv.getY(), useMipmap ? mmU : 0, useMipmap ? mmV : 0, filtering);
@@ -145,6 +145,22 @@ public class TextureDisplay extends JPanel {
     
     public void setUseMipmap(boolean useMipmap) {
         this.useMipmap = useMipmap;
+    }
+    
+    public double getMipmapBiasU() {
+        return mipmapBiasU;
+    }
+    
+    public void setMipmapBiasU(double mipmapBiasU) {
+        this.mipmapBiasU = mipmapBiasU;
+    }
+    
+    public double getMipmapBiasV() {
+        return mipmapBiasV;
+    }
+    
+    public void setMipmapBiasV(double mipmapBiasV) {
+        this.mipmapBiasV = mipmapBiasV;
     }
 }
 
